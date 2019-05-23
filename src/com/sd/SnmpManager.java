@@ -18,10 +18,9 @@ import java.util.List;
 public class SnmpManager {
 
     private LinkedHashMap<String, List<Double>> hashForMib;
+    private String ipAddress;
+    private String community;
 
-    public SnmpManager(LinkedHashMap<String, List<Double>> hashForMib) {
-        this.hashForMib = hashForMib;
-    }
 
     // A - UTILIZAÇÃ DO LINKG = [ifInOctets, ifOutOctets, ifSpeed] ----- USAR  GETNEXT
     private static String ifInOctets = ".1.3.6.1.2.1.2.2";
@@ -50,7 +49,7 @@ public class SnmpManager {
     private static String snmpInPkts = ".1.3.6.1.2.1.11.1.0";
     private static String snmpOutPkts = ".1.3.6.1.2.1.11.2.0";
 
-    ArrayList<VariableBinding> variableBindingsForGET = new ArrayList<>(
+    private ArrayList<VariableBinding> variableBindingsForGET = new ArrayList<>(
             Arrays.asList(
                     new VariableBinding(new OID(ipInReceives)),
                     new VariableBinding(new OID(ipOutRequests)),
@@ -65,7 +64,7 @@ public class SnmpManager {
             )
     );
 
-    ArrayList<VariableBinding> variableBindingsForGETNEXT = new ArrayList<>(
+    private ArrayList<VariableBinding> variableBindingsForGETNEXT = new ArrayList<>(
             Arrays.asList(
                     new VariableBinding(new OID(ifInOctets)),
                     new VariableBinding(new OID(ifOutOctets)),
@@ -73,30 +72,22 @@ public class SnmpManager {
             )
     );
 
-
-    private static String ipAddress = "127.0.0.1";
-
-    private static String port = "161";
-
-
-    private static int snmpVersion = SnmpConstants.version1;
-
-    private static String community = "public";
-
+    public SnmpManager(LinkedHashMap<String, List<Double>> hashForMib, String ipAddress, String community) {
+        this.hashForMib = hashForMib;
+        this.ipAddress = ipAddress;
+        this.community = community;
+    }
 
     public void manageNetwork() throws IOException {
-        System.out.println("SNMP GET Demo");
-
         PDU pduForGET = createPDU(PDU.GET, variableBindingsForGET);
         PDU pduForGETNEX = createPDU(PDU.GETNEXT, variableBindingsForGETNEXT);
 
-
         ResponseEvent eventGET = getReponseFor(pduForGET);
-        System.out.println("##############  Result para PUD.GET #############");
+        System.out.println("##############  Result para PUD.GET ############# \n");
         printResponse(eventGET);
 
         ResponseEvent eventGETNEXT = getReponseFor(pduForGETNEX);
-        System.out.println("############# Result para PUD.GET #############");
+        System.out.println("############# Result para PUD.GETNEXT ############# \n");
         printResponse(eventGETNEXT);
     }
 
@@ -111,7 +102,6 @@ public class SnmpManager {
                 String errorStatusText = responsePDU.getErrorStatusText();
 
                 if (errorStatus == PDU.noError) {
-                    System.out.println("############# Snmp Get Response: ############# \n");
                     responsePDU.getVariableBindings().forEach(System.out::println);
                 } else {
                     System.out.println("Error: Request Failed");
@@ -145,28 +135,29 @@ public class SnmpManager {
         // Create Target Address object
         CommunityTarget comtarget = new CommunityTarget();
         comtarget.setCommunity(new OctetString(community));
-        comtarget.setVersion(snmpVersion);
+        comtarget.setVersion(SnmpConstants.version1);
+        String port = "161";
         comtarget.setAddress(new UdpAddress(ipAddress + "/" + port));
         comtarget.setRetries(2);
         comtarget.setTimeout(1000);
 
         Snmp snmp = new Snmp(transport);
 
-        System.out.println("\n Sending Request to Agent for ..." + pdu.getType());
-
         ResponseEvent response;
         if (pdu.getType() == PDU.GET) {
-            System.out.println("Gerando respota para PDU.GET");
+            System.out.println("\n ***************** Gerando respota para PDU.GET *****************");
             response = snmp.get(pdu, comtarget);
-            System.out.println("Got Response from Agent");
+            System.out.println("***************** Got Response from Agent *****************");
         } else {
-            System.out.println("Gerando respota para PDU.GETNEXT");
+            System.out.println("***************** Gerando respota para PDU.GETNEXT *****************");
             response = snmp.getNext(pdu, comtarget);
-            System.out.println("Got Response from Agent");
+            System.out.println("***************** Got Response from Agent *****************");
         }
 
         snmp.close();
 
         return response;
     }
+
+
 }

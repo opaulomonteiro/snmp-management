@@ -14,11 +14,15 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.util.LinkedHashMap;
+import java.util.Timer;
+
 
 public class TelaInicial extends Application {
 
     private Stage primaryStage;
     private Scene cena1;
+
 
     public Scene TelaInicial() {
         GridPane telaInicial = new GridPane();
@@ -26,16 +30,12 @@ public class TelaInicial extends Application {
         Button iniciar = new Button("Iniciar");
         iniciar.setPrefSize(80, 40);
         iniciar.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, 12));
-        iniciar.setOnAction(e -> new GraficoBarra());
 
         Text inserirIP = new Text("Insira o IP:");
         TextField ip = new TextField();
 
         Text insiraComunicade = new Text("Insira a comunidade:");
         TextField comunidade = new TextField();
-
-        Text valorInstancia = new Text("Valor da instância:");
-        TextField instancia = new TextField();
 
         Text definicaoTempo = new Text("Insira o tempo:");
         TextField tempo = new TextField();
@@ -53,13 +53,8 @@ public class TelaInicial extends Application {
 
         HBox hbox4 = new HBox();
         hbox4.setSpacing(10);
-        hbox4.getChildren().add(valorInstancia);
-        hbox4.getChildren().add(instancia);
-
-        HBox hbox5 = new HBox();
-        hbox5.setSpacing(10);
-        hbox5.getChildren().add(definicaoTempo);
-        hbox5.getChildren().add(tempo);
+        hbox4.getChildren().add(definicaoTempo);
+        hbox4.getChildren().add(tempo);
 
         HBox hbox01 = new HBox();
         hbox01.setSpacing(50);
@@ -70,12 +65,21 @@ public class TelaInicial extends Application {
         vbox.getChildren().add(hbox2);
         vbox.getChildren().add(hbox3);
         vbox.getChildren().add(hbox4);
-        vbox.getChildren().add(hbox5);
         vbox.getChildren().add(hbox01);
 
         telaInicial.add(vbox, 0, 0);
 
         cena1 = new Scene(telaInicial, 450, 300);
+
+
+        iniciar.setOnAction(e -> {
+
+            SnmpManager snmpManager = new SnmpManager(new LinkedHashMap<>(), ip.getText(), comunidade.getText());
+
+            SnmpManagerScheduler scheduler = new SnmpManagerScheduler(snmpManager, System.currentTimeMillis());
+
+            new Timer().scheduleAtFixedRate(scheduler, 0, Integer.valueOf(tempo.getText()) * 1000);
+        });
         return cena1;
     }
 
@@ -90,5 +94,4 @@ public class TelaInicial extends Application {
     public static void main(String[] args) {
         launch();
     }
-
 }
