@@ -1,32 +1,34 @@
 package com.sd;
 
-import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.TimerTask;
 
 public class SnmpManagerScheduler extends TimerTask {
 
     private SnmpManager snmpManager;
     private Long startTime; // In Miliseconds
-    private Integer count;
+    private Integer count = 0;
 
-    public SnmpManagerScheduler(SnmpManager snmpManager, Long startTime) {
+    public SnmpManagerScheduler(Long startTime, SnmpManager snmpManager) {
         this.snmpManager = snmpManager;
         this.startTime = startTime;
-        this.count = 0;
     }
 
     @Override
     public void run() {
         try {
-            if (System.currentTimeMillis() - startTime > 60000) {
+            if (System.currentTimeMillis() - startTime > 5 * 60000) {
                 System.out.println("ACABOU O TEMPO DE ANALISE");
+                LinkedHashMap teste = this.snmpManager.getHashForMib();
+                System.out.println(teste.toString());
                 this.cancel();
+                snmpManager.setDone(true);
             } else {
-                count++;
                 System.out.println("\n ---------------------------------------------- RODADA NUMERO: " + count + " DE AVALAICAO DA INFA ----------------------------------------------");
-                this.snmpManager.manageNetwork();
+                this.snmpManager.manageNetwork(count);
+                count++;
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

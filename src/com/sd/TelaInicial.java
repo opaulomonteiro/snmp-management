@@ -15,6 +15,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Timer;
 
 
@@ -22,6 +23,8 @@ public class TelaInicial extends Application {
 
     private Stage primaryStage;
     private Scene cena1;
+    private LinkedHashMap<String, List<ValorGrafico>> hashForMib = new LinkedHashMap<>();
+    private SnmpManager snmpManager;
 
 
     public Scene TelaInicial() {
@@ -71,14 +74,16 @@ public class TelaInicial extends Application {
 
         cena1 = new Scene(telaInicial, 450, 300);
 
-
         iniciar.setOnAction(e -> {
 
-            SnmpManager snmpManager = new SnmpManager(new LinkedHashMap<>(), ip.getText(), comunidade.getText());
+            this.snmpManager = new SnmpManager(ip.getText(), comunidade.getText(), hashForMib);
 
-            SnmpManagerScheduler scheduler = new SnmpManagerScheduler(snmpManager, System.currentTimeMillis());
+            SnmpManagerScheduler scheduler = new SnmpManagerScheduler(System.currentTimeMillis(), snmpManager);
 
             new Timer().scheduleAtFixedRate(scheduler, 0, Integer.valueOf(tempo.getText()) * 1000);
+            Stage secondTage = new Stage();
+            secondTage.setScene(new TelaGraficos().TelaInicial(snmpManager));
+            secondTage.show();
         });
         return cena1;
     }

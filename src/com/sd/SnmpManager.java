@@ -17,10 +17,10 @@ import java.util.List;
 
 public class SnmpManager {
 
-    private LinkedHashMap<String, List<Double>> hashForMib;
+    private LinkedHashMap<String, List<ValorGrafico>> hashForMib;
+    private Boolean isDone;
     private String ipAddress;
     private String community;
-
 
     // A - UTILIZAÇÃ DO LINKG = [ifInOctets, ifOutOctets, ifSpeed] ----- USAR  GETNEXT
     private static String ifInOctets = ".1.3.6.1.2.1.2.2";
@@ -72,26 +72,26 @@ public class SnmpManager {
             )
     );
 
-    public SnmpManager(LinkedHashMap<String, List<Double>> hashForMib, String ipAddress, String community) {
-        this.hashForMib = hashForMib;
+    public SnmpManager(String ipAddress, String community, LinkedHashMap hashForMib) {
         this.ipAddress = ipAddress;
         this.community = community;
+        this.hashForMib = hashForMib;
     }
 
-    public void manageNetwork() throws IOException {
+    public void manageNetwork(Integer round) throws IOException {
         PDU pduForGET = createPDU(PDU.GET, variableBindingsForGET);
         PDU pduForGETNEX = createPDU(PDU.GETNEXT, variableBindingsForGETNEXT);
 
         ResponseEvent eventGET = getReponseFor(pduForGET);
         System.out.println("##############  Result para PUD.GET ############# \n");
-        printResponse(eventGET);
+        printResponse(eventGET, round);
 
         ResponseEvent eventGETNEXT = getReponseFor(pduForGETNEX);
         System.out.println("############# Result para PUD.GETNEXT ############# \n");
-        printResponse(eventGETNEXT);
+        printResponse(eventGETNEXT, round);
     }
 
-    private void printResponse(ResponseEvent responseEvent) {
+    private void printResponse(ResponseEvent responseEvent, Integer round) {
         // Process Agent Response
         if (responseEvent != null) {
             PDU responsePDU = responseEvent.getResponse();
@@ -102,6 +102,28 @@ public class SnmpManager {
                 String errorStatusText = responsePDU.getErrorStatusText();
 
                 if (errorStatus == PDU.noError) {
+                    for (VariableBinding variableBinding : responsePDU.getVariableBindings()) {
+                        String oid = variableBinding.getOid().toString();
+                        Integer value = variableBinding.getVariable().toInt();
+                        if (hashForMib.containsKey(oid)) {
+                            List<ValorGrafico> listValues = hashForMib.get(oid);
+                            ValorGrafico valorAnterior;
+                            if (listValues.size() == 1) {
+                                valorAnterior = listValues.get(0);
+                            } else {
+                                valorAnterior = listValues.get(round - 1);
+                            }
+                            System.out.println("Valor Atual: " + value);
+                            System.out.println("Valor Anterior: " + valorAnterior.getValor());
+                            System.out.println("Diferenca: " + (value - valorAnterior.getValor()));
+                            listValues.add(new ValorGrafico(value, value - valorAnterior.getValor(), round.toString()));
+                            hashForMib.put(oid, listValues);
+                        } else {
+                            List<ValorGrafico> newList = new ArrayList<>();
+                            newList.add(new ValorGrafico(value, value, round.toString()));
+                            hashForMib.put(oid, newList);
+                        }
+                    }
                     responsePDU.getVariableBindings().forEach(System.out::println);
                 } else {
                     System.out.println("Error: Request Failed");
@@ -159,5 +181,15 @@ public class SnmpManager {
         return response;
     }
 
+    public LinkedHashMap<String, List<ValorGrafico>> getHashForMib() {
+        return hashForMib;
+    }
 
+    public Boolean getDone() {
+        return isDone;
+    }
+
+    public void setDone(Boolean done) {
+        isDone = done;
+    }
 }
