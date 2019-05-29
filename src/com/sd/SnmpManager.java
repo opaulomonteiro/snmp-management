@@ -49,20 +49,20 @@ public class SnmpManager {
     private static String snmpInPkts = ".1.3.6.1.2.1.11.1.0";
     private static String snmpOutPkts = ".1.3.6.1.2.1.11.2.0";
 
-    private ArrayList<VariableBinding> variableBindingsForGET = new ArrayList<>(
-            Arrays.asList(
-                    new VariableBinding(new OID(ipInReceives)),
-                    new VariableBinding(new OID(ipOutRequests)),
-                    new VariableBinding(new OID(tcpInSegs)),
-                    new VariableBinding(new OID(tcpOutSegs)),
-                    new VariableBinding(new OID(udpInDatagrams)),
-                    new VariableBinding(new OID(udpOutDatagrams)),
-                    new VariableBinding(new OID(icmpInMsgs)),
-                    new VariableBinding(new OID(icmpOutMsgs)),
-                    new VariableBinding(new OID(snmpInPkts)),
-                    new VariableBinding(new OID(snmpOutPkts))
-            )
-    );
+//    private ArrayList<VariableBinding> variableBindingsForGET = new ArrayList<>(
+//            Arrays.asList(
+//                    new VariableBinding(new OID(ipInReceives)),
+//                    new VariableBinding(new OID(ipOutRequests)),
+//                    new VariableBinding(new OID(tcpInSegs)),
+//                    new VariableBinding(new OID(tcpOutSegs)),
+//                    new VariableBinding(new OID(udpInDatagrams)),
+//                    new VariableBinding(new OID(udpOutDatagrams)),
+//                    new VariableBinding(new OID(icmpInMsgs)),
+//                    new VariableBinding(new OID(icmpOutMsgs)),
+//                    new VariableBinding(new OID(snmpInPkts)),
+//                    new VariableBinding(new OID(snmpOutPkts))
+//            )
+//    );
 
     private ArrayList<VariableBinding> variableBindingsForGETNEXT = new ArrayList<>(
             Arrays.asList(
@@ -79,12 +79,12 @@ public class SnmpManager {
     }
 
     public void manageNetwork(Integer round) throws IOException {
-        PDU pduForGET = createPDU(PDU.GET, variableBindingsForGET);
+        //PDU pduForGET = createPDU(PDU.GET, variableBindingsForGET);
         PDU pduForGETNEX = createPDU(PDU.GETNEXT, variableBindingsForGETNEXT);
 
-        ResponseEvent eventGET = getReponseFor(pduForGET);
-        System.out.println("##############  Result para PUD.GET ############# \n");
-        printResponse(eventGET, round);
+//        ResponseEvent eventGET = getReponseFor(pduForGET);
+//        System.out.println("##############  Result para PUD.GET ############# \n");
+//        printResponse(eventGET, round);
 
         ResponseEvent eventGETNEXT = getReponseFor(pduForGETNEX);
         System.out.println("############# Result para PUD.GETNEXT ############# \n");

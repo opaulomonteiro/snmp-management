@@ -17,7 +17,7 @@ public class SnmpManagerScheduler extends TimerTask {
     @Override
     public void run() {
         try {
-            if (System.currentTimeMillis() - startTime > 5 * 60000) {
+            if (System.currentTimeMillis() - startTime > 2 * 60000) {
                 System.out.println("ACABOU O TEMPO DE ANALISE");
                 LinkedHashMap teste = this.snmpManager.getHashForMib();
                 System.out.println(teste.toString());

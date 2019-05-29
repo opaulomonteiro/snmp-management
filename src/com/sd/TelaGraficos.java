@@ -29,10 +29,10 @@ public class TelaGraficos extends Application {
         texto.setFont(Font.font("Calibri", FontWeight.LIGHT, FontPosture.REGULAR, 18));
 
 
-        /*Button link = new Button("Link");
+        Button link = new Button("Link");
         link.setPrefSize(80, 40);
         link.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, 12));
-        link.setOnAction(e->new GraficoLink());*/
+        link.setOnAction(e -> new GraficoLink(this.snmpManager));
 
         Button ip = new Button("IP");
         ip.setPrefSize(80, 40);
@@ -61,7 +61,7 @@ public class TelaGraficos extends Application {
 
         HBox hbox1 = new HBox();
         hbox1.setSpacing(50);
-        // hbox1.getChildren().add(link);
+        hbox1.getChildren().add(link);
         hbox1.getChildren().add(ip);
         hbox1.getChildren().add(tcp);
 
