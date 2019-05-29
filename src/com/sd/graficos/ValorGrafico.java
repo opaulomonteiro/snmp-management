@@ -1,17 +1,17 @@
-package com.sd;
+package com.sd.graficos;
 
 public class ValorGrafico {
-    private Integer valor;
-    private Integer diferenca;
+    private Long valor;
+    private Long diferenca;
     private String tempo;
 
-    public ValorGrafico(Integer valor, Integer diferenca, String tempo) {
+    public ValorGrafico(Long valor, Long diferenca, String tempo) {
         this.valor = valor;
-        this.tempo = tempo;
         this.diferenca = diferenca;
+        this.tempo = tempo;
     }
 
-    public Integer getValor() {
+    public Long getValor() {
         return valor;
     }
 
@@ -19,7 +19,7 @@ public class ValorGrafico {
         return tempo;
     }
 
-    public Integer getDiferenca() {
+    public Long getDiferenca() {
         return diferenca;
     }
 }

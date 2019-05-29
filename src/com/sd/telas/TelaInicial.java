@@ -1,5 +1,8 @@
-package com.sd;
+package com.sd.telas;
 
+import com.sd.SnmpManager;
+import com.sd.SnmpManagerScheduler;
+import com.sd.graficos.ValorGrafico;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;

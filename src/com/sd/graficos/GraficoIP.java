@@ -1,7 +1,6 @@
 package com.sd.graficos;
 
 import com.sd.SnmpManager;
-import com.sd.ValorGrafico;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
